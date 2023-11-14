@@ -2,10 +2,12 @@
 ## Running Home Assistant with Docker Compose
 
 ### Overview
-This guide is a demonstration of how to leverage Docker and Docker Compose to run Home Assistant. I won't be walking through how to get Linux installed or diving technically deep into how Docker or containers works. You don't necessarily need an understanding of Linux or even need full-blown Linux install outside of what you get with Docker Desktop or Rancher Desktop to go through the guide.
+This guide is a demonstration of how to leverage Docker and Docker Compose to run Home Assistant. I won't be walking through how to get Linux installed or diving technically deep into how Docker or containers works. For this guide, the steps are tested with Ubuntu 22.04 running on a Raspberry Pi 4. They should work just the same on other baremetal installs of Ubuntu 22.04. The commands may vary depending on the distribution.
 
-That being said here are some resources:
-- If you want to try this out on a Windows or MacOS desktop use [Rancher Desktop](https://rancherdesktop.io/) or [Docker Desktop](https://www.docker.com/products/docker-desktop/). If you go this route skip to step 2.
+If you run on Windows or MacOS, you'll need Rancher Desktop or Docker Desktop. I wouldn't recommend running Home Assistant on Windows or MacOS unless you know the limits those operating systems present.
+
+With that said here are some resources:
+- If you want to try this out on a Windows or MacOS desktop use [Rancher Desktop](https://rancherdesktop.io/) or [Docker Desktop](https://www.docker.com/products/docker-desktop/).
   - Rancher Desktop by default uses containerd as the container engine. Change the container engine to dockerd for maximum compatability. Here's a link on [how to change your container engine in Rancher Desktop](https://docs.rancherdesktop.io/ui/preferences/container-engine/general).
   - Docker Desktop is free for personal use but requires a paid subscription for most professional usage and is not an open source product.
   - Your mileage may vary on passing through hardware devices to the Home Assistant container.
