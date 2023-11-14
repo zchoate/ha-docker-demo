@@ -1,7 +1,7 @@
 # Home Automation with Docker
 ## Running Home Assistant with Docker Compose
 
-## Overview
+### Overview
 This guide is a demonstration of how to leverage Docker and Docker Compose to run Home Assistant. I won't be walking through how to get Linux installed or diving technically deep into how Docker or containers works. You don't necessarily need an understanding of Linux or even need full-blown Linux install outside of what you get with Docker Desktop or Rancher Desktop to go through the guide.
 
 That being said here are some resources:
@@ -45,13 +45,18 @@ We'll start by creating a Docker Compose file with a simple site and we'll event
 version: '3'
 
 services:
-  # The service name can be anything. We could call this httpbin or server or in this case example-service.
+  # The service name can be anything. We could call this httpbin or server or in this 
+  # case example-service.
   example-service:
-    # Specify the image name. By default, Docker will assume it is using the DockerHub registry (docker.io/{{user}}/{{image}}).
-    # For this example you'll more commonly see kennethreitz/httpbin or kennethreitz/httpbin:latest.
+    # Specify the image name. By default, Docker will assume it is using the DockerHub
+    # registry (docker.io/{{user}}/{{image}}).
+    # For this example you'll more commonly see kennethreitz/httpbin or 
+    # kennethreitz/httpbin:latest.
     image: docker.io/kennethreitz/httpbin:latest
-    # Images will typically have a port exposed. Refer to the image's documentation or Dockerfile for what ports are exposed.
-    # The first value is the host machine port that Docker will map to the port in the container (the second value).
+    # Images will typically have a port exposed. Refer to the image's documentation
+    # or Dockerfile for what ports are exposed.
+    # The first value is the host machine port that Docker will map to the port in
+    # the container (the second value).
     ports:
       - 8000:80
 ```
@@ -227,7 +232,8 @@ Traefik supports configuration via several mechanisms (file and command). The co
       # Change this to your DNS provider
       - --certificatesresolvers.le.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      # This will come in handy if you've got an internal DNS resolver, switch to your preferred external resolver.
+      # This will come in handy if you've got an internal DNS resolver, switch to your preferred
+      # external resolver.
       - --certificatesresolvers.le.acme.dnschallenge.resolvers=1.1.1.1:53
       # Put emails and other sensitive data in your .env
       - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
