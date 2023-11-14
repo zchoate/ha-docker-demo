@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  ha:
+    # Home Assistant images are in a GitHub image registry (GitHub Container Registry)
+    image: ghcr.io/home-assistant/home-assistant:stable
+    # Specifying the container name makes it accessible via that name using docker commands
+    container_name: ha
+    # This will ensure this container starts up between restarts unless specifically stopped.
+    # Prevents you from needing to run docker-compose up when your host restarts.
+    restart: unless-stopped
+    # Home Assistant should run as a privileged container. This is significantly more risky
+    # and isn't necessarily required but makes discoverability a bit easier within Home
+    # Assistant.
+    privileged: true
+    # Home Assistant doesn't necessarily need to run with this network mode, but some
+    # functionality may require additional configuration or may break without network mode
+    # set to host.
+    network_mode: host
+    # We need to map the local time into the Home Assistant container.
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config:/config

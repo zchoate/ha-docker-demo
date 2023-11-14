@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  example-service:
+    image: docker.io/kennethreitz/httpbin:latest
+    ports:
+      - 8001:80

@@ -1,0 +1,80 @@
+# ./9/docker-compose.yml
+version: '3'
+
+services:
+  ha:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: ha
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config:/config
+    labels:
+      - traefik.enable=true
+      # Hostnames aren't too sensitive but I like to hide this.
+      - traefik.http.routers.ha.rule=Host(`${HA_HOSTNAME}`)
+      - traefik.http.routers.ha.entrypoints=websecure
+      - traefik.http.routers.ha.tls=true
+      - traefik.http.routers.ha.tls.certresolver=le
+      # Add a service for port 8123
+      - traefik.http.routers.ha.service=ha
+      - traefik.http.services.ha.loadbalancer.server.port=8123
+  socket-proxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:nightly
+    container_name: socket-proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CONTAINERS=1
+      - NETWORKS=1
+      - SERVICES=1
+  traefik:
+    image: index.docker.io/library/traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    volumes:
+      - ./certs:/letsencrypt
+    command:
+      # For the Dashboard, uncomment this...good for debugging
+      # - --api.insecure=true
+      # Comment this if you don't want to record HTTP access logs
+      - --accesslog=true
+      - --providers.docker=true
+      - --providers.docker.endpoint=tcp://socket-proxy:2375
+      - --providers.docker.exposedByDefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.dnschallenge=true
+      - --certificatesresolvers.le.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      # This will come in handy if you've got an internal DNS resolver.
+      - --certificatesresolvers.le.acme.dnschallenge.resolvers=1.1.1.1:53
+      # Put emails and other sensitive data in your .env
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      # Set to staging to validate you can issue a certificate successfully.
+      # Switch the URL to https://acme-v02.api.letsencrypt.org/directory when you are ready.
+      - --certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+    env_file: .env
+    ports:
+      - 443:443
+      - 80:80
+      # For the Dashboard, uncomment this as well
+      # - 8080:8080
+    dns:
+      - 1.1.1.1
+    # Because Home Assistant is running on host networking, tell
+    # Traefik, to look at the gateway/host.
+    extra_hosts:
+      - host.docker.internal:172.18.0.1
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1

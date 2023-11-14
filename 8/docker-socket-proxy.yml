@@ -1,0 +1,11 @@
+# ./8/docker-socket-proxy.yml
+  socket-proxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:nightly
+    container_name: socket-proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CONTAINERS=1
+      - NETWORKS=1
+      - SERVICES=1

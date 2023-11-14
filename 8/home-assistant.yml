@@ -1,0 +1,19 @@
+  ha:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: ha
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config:/config
+    labels:
+      - traefik.enable=true
+      # Hostnames aren't too sensitive but I like to hide this.
+      - traefik.http.routers.ha.rule=Host(`${HA_HOSTNAME}`)
+      - traefik.http.routers.ha.entrypoints=websecure
+      - traefik.http.routers.ha.tls=true
+      - traefik.http.routers.ha.tls.certresolver=le
+      # Add a service for port 8123
+      - traefik.http.routers.ha.service=ha
+      - traefik.http.services.ha.loadbalancer.server.port=8123
