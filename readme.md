@@ -2,7 +2,7 @@
 ## Running Home Assistant with Docker Compose
 
 ### Overview
-This guide is a demonstration of how to leverage Docker and Docker Compose to run Home Assistant. I won't be walking through how to get Linux installed or diving technically deep into how Docker or containers works. For this guide, the steps are tested with Ubuntu 22.04 running on a Raspberry Pi 4. They should work just the same on other baremetal installs of Ubuntu 22.04. The commands may vary depending on the distribution.
+This guide is a demonstration of how to leverage Docker and Docker Compose to run Home Assistant. I won't be walking through how to get Linux installed or diving technically deep into how Docker or containers works. For this guide, the steps are tested with Ubuntu Server 22.04 running on a Raspberry Pi 4. They should work just the same on other baremetal installs of Ubuntu 22.04. The commands may vary depending on which Linux distribution you use.
 
 If you run on Windows or MacOS, you'll need Rancher Desktop or Docker Desktop. I wouldn't recommend running Home Assistant on Windows or MacOS unless you know the limits those operating systems present.
 
@@ -39,7 +39,7 @@ sudo usermod -aG docker $USER
 ```
 
 ### 2. Creating a simple Docker Compose file
-Docker Compose uses a YAML file to describe the containers and the configuration of those containers. You can run multiple Docker Compose files/environments at the same time. This may make sense when you want to separate some solutions. For instance, I run some critical home services like DNS, wireless controller, and Home Assistant in one file. If I break that environment, there's a negative impact to the household-approval factor. Another Docker Compose environment is running Influx and Grafana. If that breaks, nobody is going to complain that the internet is down or they can't turn on the lights.
+Docker Compose uses a YAML file to describe the containers and the configuration of those containers. You can run multiple Docker Compose files at the same time. This may make sense when you want to separate some solutions. For example, I run some critical home services like DNS, wireless controller, and Home Assistant in one file. I run some less critical services like Grafana and Influx in another file. If that breaks, nobody is going to complain that the internet is "down" or they can't turn on the lights.
 
 We'll start by creating a Docker Compose file with a simple site and we'll eventually switch this out for Home Assistant later on.
 ```YAML
@@ -51,10 +51,10 @@ services:
   # case example-service.
   example-service:
     # Specify the image name. By default, Docker will assume it is using the DockerHub
-    # registry (docker.io/{{user}}/{{image}}).
+    # registry (index.docker.io/{{user}}/{{image}}).
     # For this example you'll more commonly see kennethreitz/httpbin or 
     # kennethreitz/httpbin:latest.
-    image: docker.io/kennethreitz/httpbin:latest
+    image: index.docker.io/kennethreitz/httpbin:latest
     # Images will typically have a port exposed. Refer to the image's documentation
     # or Dockerfile for what ports are exposed.
     # The first value is the host machine port that Docker will map to the port in
@@ -118,13 +118,13 @@ services:
 Start up your Home Assistant server with `docker-compose up --detach`.
 
 ### 5. Initial Home Assistant setup
-Now that Home Assistant is started, use your browser to navigate to http://{{docker hostname/IP}}:8123. By default, Home Assistant runs on 8123 and isn't HTTPS out of the box. You should see a page similar to below. </br> ![Home Assistant Onboarding Page](./assets/5/onboarding.png)
+Now that Home Assistant is started, use your browser to navigate to http://{{docker hostname/IP}}:8123. By default, Home Assistant runs on 8123 and isn't HTTPS out of the box. You should see a page similar to below. </br></br> ![Home Assistant Onboarding Page](./assets/5/onboarding.png)
 
-Go ahead and click *Create my smart home* to create a user account. Fill out the form. </br> ![Create user form](./assets/5/createuser.png)
+Go ahead and click *Create my smart home* to create a user account. Fill out the form. </br></br> ![Create user form](./assets/5/createuser.png)
 
 Choose your location (this will help with providing weather data as well as simplify other location-based automation). On the next page, share as much data as you'd like with the Home Assistant project. If you're curious about how data is collected and annoymized see this [article](https://www.home-assistant.io/integrations/analytics/).
 
-Once you're done, you should be directed to the Home Assistant dashboard. </br> ![Home Assistant dashboard on new install](./assets/5/dashboard.png)
+Once you're done, you should be directed to the Home Assistant dashboard. </br></br> ![Home Assistant dashboard on new install](./assets/5/dashboard.png)
 
 ### 6. Add a Zigbee radio to the container
 So we have a simple Home Assistant setup and if everything you want to leverage is on your LAN or a cloud service, there's not much left. But for me, I use Zigbee temperature sensors, buttons, and lights extensively. Home Assistant works nicely with Zigbee given you have a Zigbee radio. Here's a link to a highly recommended [USB Zigbee radio](https://www.phoscon.de/en/conbee2). This is available in the US, Canada and a good portion of Europe.
@@ -166,16 +166,16 @@ services:
 
 Restart your Docker Compose environment by running `docker-compose up --detach` again. Since we've changed the file, this should recognize the changes and recreate the container.
 
-From here you can login to Home Assistant, navigate to *Settings* > *Devices & services*. Here you should see the installed integrations. Click *add integration* and search for *Zigbee Home Automation* (ZHA). </br> ![ZHA integration](./assets/6/zha.png)
+From here you can login to Home Assistant, navigate to *Settings* > *Devices & services*. Here you should see the installed integrations. Click *add integration* and search for *Zigbee Home Automation* (ZHA). </br></br> ![ZHA integration](./assets/6/zha.png)
 
 You may be prompted to choose the Zigbee protocol and specify the device path (and specify it if it doesn't match what you have in Docker Compose).
 
 Refer to the [Zigbee integration documentation](https://www.home-assistant.io/integrations/zha/) for more details on supported radios, additional configuration, etc.
 
 ### 7. Securing Home Assistant
-First, don't expose your Home Assistant instance to the internet. Use something like Tailscale (which is free for up to 100 devices and 3 users) to get remote access to your Home Assistant instance. You can also leverage the HomeKit integration if you have an Apple device capable of acting as a HomeKit gateway. That maps devices into HomeKit which is a better interface in my opinion.
+First, don't expose your Home Assistant instance to the internet. Use something like Tailscale (which is free for up to 100 devices and 3 users) to get remote access to your Home Assistant instance. You can also leverage the [HomeKit integration](https://www.home-assistant.io/integrations/homekit/) if you have an Apple device capable of acting as a HomeKit Home Hub. That maps devices into HomeKit which integrates nicely into the iOS Control Center.
 
-Alongside those optios, I'd recommend running Home Assistant behind some sort of reverse proxy that does TLS termination. If you go this route, I'd suggest getting a domain for your home lab so you can still get publicly signed and free TLS certificates (you might as well go all out at this point 😉). I wouldn't recommend exposing anything outside of your home network even with TLS. You're controlling physical devices with Home Assistant. Lights may not be terribly problematic, but thermostats and doors have obvious safety implications. Use this to secure the Home Assistant web interface on your home network.
+Whether you go with one of those options or not, I'd recommend running Home Assistant behind some sort of reverse proxy that does TLS termination. If you go this route, I'd suggest getting a domain for your home lab so you can still get publicly signed and free TLS certificates (you might as well go all out at this point 😉). I wouldn't recommend exposing anything outside of your home network even with TLS. You're controlling physical devices with Home Assistant. Lights may not be terribly problematic, but thermostats and doors have obvious safety implications. Use this to secure the Home Assistant web interface on your home network.
 
 ### 8. Setup Traefik reverse-proxy
 For the example, we'll leverage Traefik as the reverse proxy with a domain's DNS zone in Cloudflare. Traefik comes with support out of the box for the ACME protocol. ACME allows for you to issue and renew certificates automatically. This is done through validation of the domain's ownership through an HTTP challenge or, in this example, a DNS challenge. A DNS challenge enables us to keep our hosts off of the internet. ACME has to be supported by the certificate authority. We'll use [LetsEncrypt](https://letsencrypt.org/) as the CA. They provide free TLS certificates that are valid for 3 months and with ACME support, you'll typically see this renewed automatically every month (well before the certificate expires).
@@ -183,9 +183,9 @@ For the example, we'll leverage Traefik as the reverse proxy with a domain's DNS
 Before going too much further, make sure you can satisify the below requirements:
 - Ownership of a domain that has a DNS zone hosted in Cloudflare (or another [DNS provider](https://doc.traefik.io/traefik/https/acme/#providers) supported by Traefik)
 - API key to at least edit the DNS zone
-- Local DNS server to update if you don't want to add the record to the public DNS zone
+- Local DNS server to update if you don't want to add the record to the public DNS zone (I recommend [Pi-Hole](https://pi-hole.net/) running in the same file)
 
-The Docker Compose file gets significantly larger with the introduction of Traefik. We'll break this into separate components but you can see the full file [here](./8/docker-compose.yml).
+The Docker Compose file gets significantly larger with the introduction of Traefik. We'll break this into separate components, but you can see the full file [here](./9/docker-compose.yml).
 
 #### a. Docker Socket Proxy
 Traefik uses labels in Docker for the configuration of services. You may see guides that instruct you to mount the Docker socket into Traefik so Traefik can see this directly. This can compromise the security of your host. If your server isn't exposed externally, this might be a risk you're willing to accept, but the Docker Socket proxy is a pretty simple alternative. This is essentially a proxy that limits access to the Docker API and gives Traefik only the access it needs to view the Docker labels.

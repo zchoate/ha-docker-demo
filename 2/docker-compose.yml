@@ -1,12 +1,18 @@
+# ./2/docker-compose.yml
 version: '3'
 
 services:
-  # The service name can be anything. We could call this httpbin or server or in this case example-service.
+  # The service name can be anything. We could call this httpbin or server or in this 
+  # case example-service.
   example-service:
-    # Specify the image name. By default, Docker will assume it is using the DockerHub registry (docker.io/{{user}}/{{image}}).
-    # For this example you'll more commonly see kennethreitz/httpbin or kennethreitz/httpbin:latest.
-    image: docker.io/kennethreitz/httpbin:latest
-    # Images will typically have a port exposed. Refer to the image's documentation or Dockerfile for what ports are exposed.
-    # The first value is the host machine port that Docker will map to the port in the container (the second value).
+    # Specify the image name. By default, Docker will assume it is using the DockerHub
+    # registry (index.docker.io/{{user}}/{{image}}).
+    # For this example you'll more commonly see kennethreitz/httpbin or 
+    # kennethreitz/httpbin:latest.
+    image: index.docker.io/kennethreitz/httpbin:latest
+    # Images will typically have a port exposed. Refer to the image's documentation
+    # or Dockerfile for what ports are exposed.
+    # The first value is the host machine port that Docker will map to the port in
+    # the container (the second value).
     ports:
       - 8000:80

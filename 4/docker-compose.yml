@@ -1,3 +1,4 @@
+# ./4/docker-compose.yml
 version: '3'
 
 services:
@@ -18,6 +19,8 @@ services:
     # set to host.
     network_mode: host
     # We need to map the local time into the Home Assistant container.
+    # We need to persist the config of Home Assistant so you'll need to create a folder 
+    # for config data and map that in (second volume mapping)
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./config:/config
