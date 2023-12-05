@@ -2,6 +2,6 @@ version: '3'
 
 services:
   example-service:
-    image: docker.io/kennethreitz/httpbin:latest
+    image: index.docker.io/library/nginx:latest
     ports:
       - 8001:80

@@ -7,9 +7,10 @@ services:
   example-service:
     # Specify the image name. By default, Docker will assume it is using the DockerHub
     # registry (index.docker.io/{{user}}/{{image}}).
-    # For this example you'll more commonly see kennethreitz/httpbin or 
-    # kennethreitz/httpbin:latest.
-    image: index.docker.io/kennethreitz/httpbin:latest
+    # For this example you'll more commonly see nginx or 
+    # nginx:latest for Docker Hub maintained images or something like mccutchen/go-httpbin
+    # for images maintained by a user or organization.
+    image: index.docker.io/library/nginx:latest
     # Images will typically have a port exposed. Refer to the image's documentation
     # or Dockerfile for what ports are exposed.
     # The first value is the host machine port that Docker will map to the port in

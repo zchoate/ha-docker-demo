@@ -47,14 +47,15 @@ We'll start by creating a Docker Compose file with a simple site and we'll event
 version: '3'
 
 services:
-  # The service name can be anything. We could call this httpbin or server or in this 
+  # The service name can be anything. We could call this nginx or server or in this 
   # case example-service.
   example-service:
     # Specify the image name. By default, Docker will assume it is using the DockerHub
     # registry (index.docker.io/{{user}}/{{image}}).
-    # For this example you'll more commonly see kennethreitz/httpbin or 
-    # kennethreitz/httpbin:latest.
-    image: index.docker.io/kennethreitz/httpbin:latest
+    # For this example you'll more commonly see nginx or 
+    # nginx:latest for Docker Hub maintained images or something like mccutchen/go-httpbin
+    # for images maintained by a user or organization.
+    image: index.docker.io/library/nginx:latest
     # Images will typically have a port exposed. Refer to the image's documentation
     # or Dockerfile for what ports are exposed.
     # The first value is the host machine port that Docker will map to the port in
@@ -62,7 +63,7 @@ services:
     ports:
       - 8000:80
 ```
-This Docker Compose file (also available [here](./2/docker-compose.yml)) will spin up the *httpbin* application on port 8000. The Docker Compose file will have at least 2 sections, version and services. Services are the containers that we'll be running. In this example, we just have one container, but our final solution will have several. Within services, you'll specify the configuration for that service including the image (or the image build), ports, volumes, environment, networks, etc. Refer to the [Docker Compose docs](https://docs.docker.com/compose/) for additional details on what can be configured in Docker Compose.
+This Docker Compose file (also available [here](./2/docker-compose.yml)) will spin up the *nginx* application on port 8000. The Docker Compose file will have at least 2 sections, version and services. Services are the containers that we'll be running. In this example, we just have one container, but our final solution will have several. Within services, you'll specify the configuration for that service including the image (or the image build), ports, volumes, environment, networks, etc. Refer to the [Docker Compose docs](https://docs.docker.com/compose/) for additional details on what can be configured in Docker Compose.
 
 Save this file as `docker-compose.yml`. By default, Docker Compose commands assume you're working with `docker-compose.yml`. You can specify a different filename, you will need to throw a `-f other-docker-compose.yml` into your command. You'll see this in the next section.
 
@@ -71,7 +72,7 @@ Running Docker Compose is as simple as navigating to the directory the file is l
 
 To see the stdout of all the services, `docker-compose logs` (or `docker-compose -f other-docker-compose.yml logs`). To see stdout for a specific service, add the name of the service to the end of that command `docker-compose logs example-service`.
 
-Once you validate the service is running, try pulling up the web page for *httpbin* at http://localhost:8000 or if you're connecting from another host, use the hostname/IP of your Docker host. You can try adjusting the port mapping so 8000 is 8001 in your Docker Compose file. When you do that, restart that service `docker-compose restart example-service`. You'll see the service is now available on 8001 rather than 8000. Refer to [this file](./3/docker-compose.yml).
+Once you validate the service is running, try pulling up the web page for *nginx* at http://localhost:8000 or if you're connecting from another host, use the hostname/IP of your Docker host. You can try adjusting the port mapping so 8000 is 8001 in your Docker Compose file. When you do that, restart that service `docker-compose restart example-service`. You'll see the service is now available on 8001 rather than 8000. Refer to [this file](./3/docker-compose.yml).
 
 Finish this section by bringing down Docker Compose, `docker-compose down`.
 
