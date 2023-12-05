@@ -2,7 +2,7 @@
 version: '3'
 
 services:
-  # The service name can be anything. We could call this httpbin or server or in this 
+  # The service name can be anything. We could call this nginx or server or in this 
   # case example-service.
   example-service:
     # Specify the image name. By default, Docker will assume it is using the DockerHub
